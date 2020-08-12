@@ -10,8 +10,8 @@ pipeline{
 
         stage("build") {
             steps {
-                sh label: '', script: '''gcc HelloWorld.cpp -o main.out  
-                            ./main.out'''
+                sh label: '', script: '''javac HelloWorld.java
+                                         java HelloWorld'''
             }
         }
 
