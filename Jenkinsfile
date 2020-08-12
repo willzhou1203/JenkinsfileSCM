@@ -18,10 +18,10 @@ pipeline{
     }
     post{
         always{
-            echo "========always========"
-            sh label: '', script: 'git log -1'
-            
-            echo env.BUILD_NUMBER
+            emailext body: '''Project Name: env.JOB_NAME
+                    Author: env.CHANGE_AUTHOR
+                    Commit Info: env.CHANGE_TITLE
+                    currentBuild.description''', subject: '$DEFAULT_SUBJECT', to: '$DEFAULT_RECIPIENTS'
         }
     }
 }
