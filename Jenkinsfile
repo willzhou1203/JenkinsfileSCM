@@ -20,6 +20,8 @@ pipeline{
         always{
             echo "========always========"
             sh label: '', script: 'git log -1'
+            
+            emailext attachLog: true, body: '$DEFAULT_CONTENT', recipientProviders: [developers()], subject: '$DEFAULT_SUBJECT', to: '$DEFAULT_RECIPIENTS'
         }
     }
 }
