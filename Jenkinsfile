@@ -11,7 +11,7 @@ pipeline{
         stage("build") {
             steps {
                 sh label: '', script: '''gcc -Wall HelloWorld.cpp -o HelloWorld
-                /HelloWorld'''
+                ./HelloWorld.out'''
             }
         }
 
