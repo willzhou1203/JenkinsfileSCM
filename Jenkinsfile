@@ -19,10 +19,10 @@ pipeline{
     post{
         always{
             echo '''
-                Project Name: env.JOB_NAME
-                Author: env.CHANGE_AUTHOR
-                Commit Info: env.CHANGE_TITLE
-                currentBuild.description
+                Project Name: $env.JOB_NAME
+                Author: $env.CHANGE_AUTHOR
+                Commit Info: $env.CHANGE_TITLE
+                $currentBuild.description
             '''
             emailext body: '''Project Name: env.JOB_NAME
                     Author: env.CHANGE_AUTHOR
