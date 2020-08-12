@@ -21,7 +21,7 @@ pipeline{
             echo "========always========"
             sh label: '', script: 'git log -1'
             
-            echo $BUILD_NUMBER
+            echo env.BUILD_NUMBER
         }
     }
 }
