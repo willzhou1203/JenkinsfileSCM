@@ -1,6 +1,6 @@
 pipeline{
     agent any
-
+    
     stages{
         stage("access to git") {
             steps {
@@ -10,24 +10,59 @@ pipeline{
 
         stage("build") {
             steps {
-                sh label: '', script: '''javac HelloWorld.java
-                                         java HelloWorld'''
+                sh label: '', script: '''gcc -Wall HelloWorld.cpp -o HelloWorld
+                ./HelloWorld.out'''
             }
         }
 
     }
     post{
         always{
-            echo '''
-                Project Name: $env.JOB_NAME
-                Author: $env.CHANGE_AUTHOR
-                Commit Info: $env.CHANGE_TITLE
-                $currentBuild.description
-            '''
-            emailext body: '''Project Name: env.JOB_NAME
-                    Author: env.CHANGE_AUTHOR
-                    Commit Info: env.CHANGE_TITLE
-                    currentBuild.description''', subject: '$DEFAULT_SUBJECT', to: '$DEFAULT_RECIPIENTS'
+            echo "========always========"
+            script{
+                def changelogString = gitChangelog returnType: 'STRING',
+                                // from: [type: 'COMMIT', value: ''],
+                                to: [type: 'REF', value: 'master'],
+                                template: """
+                                <h1> Git Changelog changelog </h1>
+
+                                <p>
+                                Changelog of Git Changelog.
+                                </p>
+
+                                {{#tags}}
+                                <h2> {{name}} </h2>
+                                {{#issues}}
+                                {{#hasIssue}}
+                                {{#hasLink}}
+                                <h2> {{name}} <a href="{{link}}">{{issue}}</a> {{title}} </h2>
+                                {{/hasLink}}
+                                {{^hasLink}}
+                                <h2> {{name}} {{issue}} {{title}} </h2>
+                                {{/hasLink}}
+                                {{/hasIssue}}
+                                {{^hasIssue}}
+                                <h2> {{name}} </h2>
+                                {{/hasIssue}}
+
+
+                                {{#commits}}
+                                <p>
+                                <h3>{{{messageTitle}}}</h3>
+
+                                {{#messageBodyItems}}
+                                <li> {{.}}</li> 
+                                {{/messageBodyItems}}
+                                </p>
+
+
+                                {{/commits}}
+
+                                {{/issues}}
+                                {{/tags}}
+                                """
+                currentBuild.description = changelogString
+            }
         }
     }
 }
