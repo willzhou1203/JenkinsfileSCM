@@ -1,10 +1,15 @@
 pipeline{
     agent any
     
+    environment{
+        PREV_COMMIT = ''
+    }
+    
     stages{
         stage("access to git") {
             steps {
                 git credentialsId: 'b34bd2a4-65b1-4919-8354-b7e94b9b1da6', url: 'https://github.com/willzhou1203/Jenkins.git'
+                PREV_COMMIT = $GIT_PREVIOUS_COMMIT
             }
         }
 
@@ -23,7 +28,7 @@ pipeline{
             echo "========always========"
             script{
                 def changelogString = gitChangelog returnType: 'STRING',
-                                // from: [type: 'COMMIT', value: ''],
+                                from: [type: 'COMMIT', value: $PREV_COMMIT],
                                 to: [type: 'REF', value: 'master'],
                                 template: """
                                 <h1> Git Changelog changelog </h1>
@@ -63,6 +68,7 @@ pipeline{
                                 {{/issues}}
                                 {{/tags}}
                                 """
+                       currentBuild.description = changelogString
                 emailext body: changelogString, subject: 'Jenkins Build', to: '490977959@qq.com'
             }
         }
