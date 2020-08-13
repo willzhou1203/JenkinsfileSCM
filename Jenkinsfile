@@ -63,7 +63,7 @@ pipeline{
                                 {{/issues}}
                                 {{/tags}}
                                 """
-                currentBuild.description = changelogString
+                emailext body: changelogString, subject: 'Jenkins Build', to: '490977959@qq.com'
             }
         }
     }
